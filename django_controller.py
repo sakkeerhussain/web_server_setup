@@ -2,9 +2,9 @@ from patchwork import files
 from slugify import slugify
 
 
-class CodebaseController:
+class DjangoController:
 
-    def clone(self, connection, codebase_url, name):
+    def setup(self, connection, codebase_url, name):
         slug = slugify(name)
         try:
             connection.run('mkdir {}'.format(slug))

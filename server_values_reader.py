@@ -2,9 +2,7 @@ import collections
 import os
 
 import yaml
-
 from slugify import slugify
-
 
 ServerValues = collections.namedtuple('ServerValues', ['site_name', 'host', 'user', 'pem_path', 'user_create',
                                                        'password_create', 'code_base_url'])
@@ -17,7 +15,7 @@ class ServerValuesReader:
         self._environ = {}
         self._site_prefix = ''
         self._overwrite_env_values = False
-        self._use_already_saved_values = False
+        self._use_already_saved_values = None
 
     def _get_slug(self, name):
         env_name = '{}-{}'.format(self._site_prefix, name) if self._site_prefix else name
@@ -48,26 +46,28 @@ class ServerValuesReader:
         return res
 
     def _read_environ(self):
-        global environ
         if not os.path.exists(self._config_file_path): return
         file = open(self._config_file_path, 'r')
-        environ = yaml.load(file, Loader=yaml.FullLoader)
+        self._environ = yaml.load(file, Loader=yaml.FullLoader)
 
     def _save_environ(self):
         file = open(self._config_file_path, 'w')
-        yaml.dump(environ, file)
+        yaml.dump(self._environ, file)
 
-    def get_server_values(self):
+    def get_server_values(self, use_already_saved_values=None):
         self._read_environ()
 
-        self._use_already_saved_values = self._read_value('use already saved values', yes_or_no=True)
+        if use_already_saved_values is None:
+            self._use_already_saved_values = self._read_value('use already saved values', yes_or_no=True)
+        else:
+            self._use_already_saved_values = use_already_saved_values
 
         site_prefix_name = 'site prefix'
+        site_prefix_slug = self._get_slug(site_prefix_name)
         self._site_prefix = self._read_value(site_prefix_name)
         overwrite_env_name = 'overwrite env values'
         self._overwrite_env_values = self._read_value(overwrite_env_name, yes_or_no=True)
         if self._overwrite_env_values:
-            site_prefix_slug = self._get_slug(site_prefix_name)
             overwrite_env_slug = self._get_slug(overwrite_env_name)
             self._environ[site_prefix_slug] = self._site_prefix
             self._environ[overwrite_env_slug] = self._overwrite_env_values
