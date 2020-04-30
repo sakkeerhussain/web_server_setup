@@ -27,7 +27,7 @@ class ServerValuesReader:
         if yes_or_no and not options:
             options = ['y', 'n']
         slug = self._get_slug(name)
-        env_val = environ.get(slug, '')
+        env_val = self._environ.get(slug, '')
 
         if env_val != '' and self._use_already_saved_values:
             res = env_val
@@ -44,7 +44,7 @@ class ServerValuesReader:
             res = res == 'y' or res
 
         if self._overwrite_env_values:
-            environ[slug] = res
+            self._environ[slug] = res
         return res
 
     def _read_environ(self):
@@ -69,8 +69,8 @@ class ServerValuesReader:
         if self._overwrite_env_values:
             site_prefix_slug = self._get_slug(site_prefix_name)
             overwrite_env_slug = self._get_slug(overwrite_env_name)
-            environ[site_prefix_slug] = self._site_prefix
-            environ[overwrite_env_slug] = self._overwrite_env_values
+            self._environ[site_prefix_slug] = self._site_prefix
+            self._environ[overwrite_env_slug] = self._overwrite_env_values
 
         site_name = self._read_value('name')
         host = self._read_value('host address')
