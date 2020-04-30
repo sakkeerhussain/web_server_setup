@@ -14,6 +14,8 @@ class DjangoController:
         with connection.cd(slug):
             connection.run('virtualenv venv -p $(which python3)')
             connection.run('source venv/bin/activate')
+            connection.run('ls')
+            connection.run('cd code && ls')
             connection.run('pip install -r code/requirements.txt')
             connection.run('pip freeze')
         # try:

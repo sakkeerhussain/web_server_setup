@@ -32,5 +32,6 @@ class CodebaseController:
 
         with connection.cd(slug):
             connection.run('git clone {} -n code'.format(codebase_url))
+            connection.run('cd code && git reset --hard')
 
         print('Cloned code repo to path: {}'.format(slug))
