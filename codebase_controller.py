@@ -31,6 +31,6 @@ class CodebaseController:
             input('Hit enter after adding git deployment key')
 
         with connection.cd(slug):
-            connection.run('git clone {}'.format(codebase_url))
+            connection.run('git clone {} -n code'.format(codebase_url))
 
         print('Cloned code repo to path: {}'.format(slug))
